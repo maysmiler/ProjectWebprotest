@@ -68,7 +68,7 @@ public class Account implements Serializable {
         this.accountId = accountId;
     }
 
-    public Account(Integer accountId, String email, String password) {
+    public Account(String email, String password) {
         this.accountId = accountId;
         this.email = email;
         this.password = password;

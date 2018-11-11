@@ -45,22 +45,27 @@ public class ResetPassServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-      HttpSession session = request.getSession(false);
+      HttpSession session = request.getSession(true);
       String emailre = request.getParameter("emailre");
       String passre = request.getParameter("passre");
       String newpass = request.getParameter("newpass");
       String newpasscf = request.getParameter("newpasscf");
-    AccountJpaController accountJpaCtrl = new AccountJpaController(utx, emf);
-            Account ac = accountJpaCtrl.findByEmail(emailre);
-        if (ac!=null) {
-             if (emailre!=null&&emailre.equals(ac.getEmail())) {
-                 if (passre!=null&&passre.equals(ac.getPassword())) {
+      AccountJpaController accountJpaCtrl = new AccountJpaController(utx, emf);
+//        Account acSession = (Account)session.getAttribute("account");
+
+            Account account = accountJpaCtrl.findByEmail(emailre);
+            System.out.println("findemail------------------------"+emailre+newpass);
+             if (emailre!=null&&emailre.equals(account.getEmail())) {
+                 System.out.println("emilenotnull++++++++++++++++++"+emailre);
+                 if (passre!=null&&passre.equals(account.getPassword())) {
+                     System.out.println("password//////////////////////////"+newpass);
                      if (newpass!=null&&newpass.equals(newpasscf)) {
-                         Account account = new Account(Integer.BYTES,emailre,ac.getPassword());
+                           System.out.println("password***********************"+newpass);
+                        account = new Account(emailre,account.getPassword());
                          try {
-                             accountJpaCtrl.edit(ac);
-                             session.setAttribute("account", account);
-                             response.sendRedirect("ResetPassword.jsp");
+                             accountJpaCtrl.edit(account);
+                             session.setAttribute("account",account);
+                             response.sendRedirect("HomePage.jsp");
                              return;
                              
                          } catch (NonexistentEntityException ex) {
@@ -81,7 +86,7 @@ public class ResetPassServlet extends HttpServlet {
                  session.setAttribute("message","Email Invalid");
              }
   
-        }
+        
         getServletContext().getRequestDispatcher("/Login.jsp").forward(request, response);
     }
 
